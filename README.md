@@ -15,7 +15,6 @@ This project is a fork of the original [FlowDriver](https://github.com/NullLaten
 This project is intended for personal usage and research purposes only. Do not use it for illegal purposes or in production environments. The authors are not responsible for any misuse.
 
 ### Prerequisites
-- Go programming language (version 1.25 or higher)
 - A Google Cloud account with billing enabled
 
 ### Step-by-Step Setup Guide
@@ -28,12 +27,11 @@ This project is intended for personal usage and research purposes only. Do not u
 5. Click **Create Credentials** -> **OAuth client ID**. Select **Desktop App** as the type.
 6. Download the resulting JSON file and rename it exactly to `credentials.json`. Place this file in the project folder.
 
-#### 2. Build the Application
-Open your terminal in the project directory and run:
-```bash
-go build -o bin/client ./cmd/client
-go build -o bin/server ./cmd/server
-```
+#### 2. Download Binaries
+You do not need to install Go or build the project from source. 
+1. Go to the **Releases** page of this GitHub repository.
+2. Download the `.zip` file that matches your operating system (Linux, Windows, or macOS).
+3. Extract the contents of the `.zip` file into a new folder. You will find the pre-built `client` and `server` executables inside, along with example configuration files.
 
 #### 3. Configuration
 You need to create configuration files for both the client and the server. You can use the provided examples as a starting point.
@@ -70,16 +68,18 @@ Create `server_config.json`:
 **First-time Authentication (Client):**
 Run the client first to authenticate your Google account.
 ```bash
-./bin/client -c client_config.json -gc credentials.json
+./client -c client_config.json -gc credentials.json
 ```
+*(On Windows, use `client.exe` instead of `./client`)*
 Follow the URL provided in the terminal, log in to your Google account, and paste the redirected URL back into the terminal. This will generate a `.token` file.
 
 **Deploying the Server:**
 Copy both your `credentials.json` and the newly generated `.token` file to your remote server.
 Run the server:
 ```bash
-./bin/server -c server_config.json -gc credentials.json
+./server -c server_config.json -gc credentials.json
 ```
+*(On Windows, use `server.exe` instead of `./server`)*
 
 ### Cost Awareness
 Google Cloud Storage is a paid service. However, for typical FlowDriver usage (small temporary files that are immediately deleted), the costs are minimal (typically under $1 per month for a single user).
@@ -96,7 +96,6 @@ Google Cloud Storage is a paid service. However, for typical FlowDriver usage (s
 این پروژه صرفاً برای استفاده شخصی و اهداف تحقیقاتی در نظر گرفته شده است. از آن برای مقاصد غیرقانونی یا در محیط‌های عملیاتی استفاده نکنید. نویسندگان هیچ مسئولیتی در قبال سوء استفاده از این ابزار ندارند.
 
 ### پیش‌نیازها
-- زبان برنامه‌نویسی Go (نسخه 1.25 یا بالاتر)
 - یک حساب Google Cloud فعال
 
 ### راهنمای گام به گام نصب و راه‌اندازی
@@ -109,12 +108,11 @@ Google Cloud Storage is a paid service. However, for typical FlowDriver usage (s
 5. روی **Create Credentials** -> **OAuth client ID** کلیک کنید. نوع برنامه را **Desktop App** انتخاب کنید.
 6. فایل JSON تولید شده را دانلود کرده و نام آن را دقیقاً به `credentials.json` تغییر دهید. این فایل را در پوشه پروژه قرار دهید.
 
-#### ۲. ساخت فایل‌های اجرایی
-ترمینال خود را در پوشه پروژه باز کرده و دستورات زیر را اجرا کنید:
-```bash
-go build -o bin/client ./cmd/client
-go build -o bin/server ./cmd/server
-```
+#### ۲. دانلود فایل‌های اجرایی
+شما نیازی به نصب Go یا کامپایل پروژه ندارید.
+۱. به بخش **Releases** در همین مخزن گیت‌هاب بروید.
+۲. فایل `.zip` مربوط به سیستم‌عامل خود (لینوکس، ویندوز یا مک) را دانلود کنید.
+۳. محتویات فایل `.zip` را از حالت فشرده خارج کنید. فایل‌های اجرایی `client` و `server` به همراه نمونه‌های پیکربندی در آن قرار دارند.
 
 #### ۳. پیکربندی
 شما باید فایل‌های پیکربندی را برای کلاینت و سرور ایجاد کنید. می‌توانید از مثال‌های زیر استفاده کنید.
@@ -151,16 +149,18 @@ go build -o bin/server ./cmd/server
 **احراز هویت برای اولین بار (کلاینت):**
 ابتدا کلاینت را برای احراز هویت حساب گوگل خود اجرا کنید.
 ```bash
-./bin/client -c client_config.json -gc credentials.json
+./client -c client_config.json -gc credentials.json
 ```
+*(در سیستم‌عامل ویندوز، به جای `./client` از `client.exe` استفاده کنید)*
 لینکی که در ترمینال نمایش داده می‌شود را دنبال کنید، وارد حساب گوگل خود شوید و URL تغییر مسیر داده شده را کپی کرده و در ترمینال جای‌گذاری کنید. این کار یک فایل `.token` تولید می‌کند.
 
 **راه‌اندازی سرور:**
 فایل `credentials.json` و فایل `.token` که به تازگی تولید شده را در سرور خود کپی کنید.
 سرور را اجرا کنید:
 ```bash
-./bin/server -c server_config.json -gc credentials.json
+./server -c server_config.json -gc credentials.json
 ```
+*(در سیستم‌عامل ویندوز، به جای `./server` از `server.exe` استفاده کنید)*
 
 ### آگاهی از هزینه‌ها
 سرویس Google Cloud Storage رایگان نیست. با این حال، برای استفاده معمول از FlowDriver (فایل‌های موقت کوچک که فوراً حذف می‌شوند)، هزینه‌ها حداقل است (معمولاً کمتر از ۱ دلار در ماه برای یک کاربر).
