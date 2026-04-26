@@ -16,7 +16,7 @@ type AppConfig struct {
 	// ClientID identifies this client node to allow multi-tenant folder sharing.
 	ClientID string `json:"client_id,omitempty"`
 
-	// StorageType defines the backend ("local" or "google").
+	// StorageType defines the backend ("local", "google", or "gcs").
 	StorageType string `json:"storage_type"`
 
 	// LocalDir is the path used when StorageType is "local".
@@ -24,6 +24,9 @@ type AppConfig struct {
 
 	// GoogleFolderID is the Drive Folder ID when StorageType is "google".
 	GoogleFolderID string `json:"google_folder_id,omitempty"`
+
+	// GCSBucket is the Cloud Storage bucket name when StorageType is "gcs".
+	GCSBucket string `json:"gcs_bucket,omitempty"`
 
 	// RefreshRateMs is the polling (RX) interval in milliseconds for the engine.
 	RefreshRateMs int `json:"refresh_rate_ms,omitempty"`

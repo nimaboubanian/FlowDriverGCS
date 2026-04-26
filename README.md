@@ -1,77 +1,51 @@
-# Flow Driver 🌊
+# FlowDriverGCS
 
-**Flow Driver** is a covert transport system designed to tunnel network traffic (SOCKS5) through common cloud storage platforms like Google Drive. It allows for reliable communication in restrictive environments by leveraging legitimate API traffic.
-
-**Flow Driver** یک سیستم انتقال پنهان (Covert Transport) است که برای تونل کردن ترافیک شبکه (SOCKS5) از طریق پلتفرم‌های ذخیره‌سازی ابری رایج مانند گوگل درایو طراحی شده است. این ابزار با بهره‌گیری از ترافیک قانونی API، امکان ارتباط مطمئن در محیط‌های محدود شده را فراهم می‌کند.
-
----
-
-## ⚠️ Disclaimer / سلب مسئولیت
-
-**English**: This project is intended for personal usage and research purposes only. Please do not use it for illegal purposes, and do not use it in a production environment. The authors are not responsible for any misuse of this tool.
-
-**فارسی**: این پروژه صرفاً برای استفاده شخصی و اهداف تحقیقاتی در نظر گرفته شده است. لطفاً از آن برای مقاصد غیرقانونی استفاده نکنید و در محیط‌های عملیاتی (Production) از آن استفاده نشود. نویسندگان هیچ مسئولیتی در قبال سوء استفاده از این ابزار ندارند.
+- [English Version](#english-version)
+- [نسخه فارسی](#persian-version)
 
 ---
 
-## How it Works / نحوه عملکرد
+## English Version
 
-### English
-Flow Driver works by treating a cloud storage folder as a data queue:
-1.  **Client**: Captures local SOCKS5 requests and bundles them into a compact **Binary Protocol**. These binary "packets" are uploaded to a specific Google Drive folder.
-2.  **Server**: Continuously polls the Drive folder. When it finds a request from a client, it downloads it, opens a real TCP connection to the destination, and sends back the result as a response file.
+**FlowDriverGCS** is a covert transport system designed to tunnel network traffic (SOCKS5) through Google Cloud Storage (GCS). It leverages legitimate API traffic to establish reliable communication in restrictive network environments. 
 
-### فارسی
-نحوه عملکرد این ابزار به این صورت است که از یک پوشه در فضای ابری به عنوان صف داده‌ها استفاده می‌کند:
-1.  **کلاینت**: درخواست‌های SOCKS5 محلی را دریافت کرده و آن‌ها را در قالب یک **پروتکل باینری** فشرده بسته‌بندی می‌کند. این بسته‌ها در یک پوشه خاص در گوگل درایو آپلود می‌شوند.
-2.  **سرور**: به طور مداوم پوشه درایو را بررسی می‌کند. با یافتن درخواست جدید، آن را دانلود کرده، اتصال TCP واقعی را برقرار می‌کند و نتیجه را در قالب فایل‌های پاسخ به درایو بازمی‌گرداند.
+This project is a fork of the original [FlowDriver](https://github.com/NullLatency/FlowDriver) project. While the original relies on Google Drive, this fork uses Google Cloud Storage (GCS) to resolve severe API rate limit issues, providing significantly higher throughput and stability.
 
----
+### Disclaimer
+This project is intended for personal usage and research purposes only. Do not use it for illegal purposes or in production environments. The authors are not responsible for any misuse.
 
-## Setup & Installation / نصب و راه‌اندازی
+### Prerequisites
+- Go programming language (version 1.25 or higher)
+- A Google Cloud account with billing enabled
 
-### Prerequisites / پیش‌نیازها
-- **Go** (1.25 or higher)
-- **Google Drive API Credentials**: You need a `credentials.json` (OAuth2) file.
-- **Shared Folder (Auto)**: If you leave `google_folder_id` empty, the tool will automatically create a folder named **"Flow-Data"** and save its ID to your config!
+### Step-by-Step Setup Guide
 
-### 1. Obtain Credentials / دریافت فایل اعتبارنامه
-To get your `credentials.json`, follow the instructions on the [Google Drive API Go Quickstart](https://developers.google.com/workspace/drive/api/quickstart/go) or follow these steps:
+#### 1. Google Cloud Setup
+1. Go to the Google Cloud Console and create a new project.
+2. Navigate to **Cloud Storage** -> **Buckets** and click **Create**.
+3. Choose a unique name for your bucket and select the **Standard** storage class.
+4. Navigate to **APIs & Services** -> **Credentials**.
+5. Click **Create Credentials** -> **OAuth client ID**. Select **Desktop App** as the type.
+6. Download the resulting JSON file and rename it exactly to `credentials.json`. Place this file in the project folder.
 
-برای دریافت فایل `credentials.json` می‌توانید طبق دستورالعمل‌های موجود در [شروع سریع Google Drive API برای Go](https://developers.google.com/workspace/drive/api/quickstart/go) عمل کنید یا مراحل زیر را انجام دهید:
-
-**English:**
-1.  **Enable the API**: Go to the [Google Cloud Console](https://console.cloud.google.com/), create a project, and enable the **Google Drive API**.
-2.  **Configure Consent Screen**: Go to "APIs & Services" > "OAuth consent screen." Fill in the app name and user support email (Branding).
-3.  **Create Credentials**: Go to "Credentials" > "Create Credentials" > **OAuth client ID**. Select **Desktop App** as the application type.
-4.  **Download JSON**: Download the client secret file and rename it to `credentials.json`.
-5.  **Publish App (Optional but Recommended)**: If your app status is "Testing," your token will expire every 7 days. Go to the OAuth consent screen and click "Publish App" to make the authorization permanent for your account.
-
-**فارسی:**
-1.  **فعال‌سازی API**: به [کنسول گوگل کلاود](https://console.cloud.google.com/) بروید، یک پروژه بسازید و **Google Drive API** را فعال کنید.
-2.  **تنظیم صفحه رضایت**: به بخش "APIs & Services" > "OAuth consent screen" بروید. نام برنامه و ایمیل پشتیبانی را وارد کنید (بخش Branding).
-3.  **ساخت اعتبارنامه**: به بخش "Credentials" > "Create Credentials" > **OAuth client ID** بروید. نوع برنامه را **Desktop App** انتخاب کنید.
-4.  **دانلود فایل**: فایل کلاینت سکرت را دانلود کرده و نام آن را به `credentials.json` تغییر دهید.
-5.  **انتشار برنامه (پیشنهادی)**: اگر وضعیت برنامه روی "Testing" باشد، توکن شما هر ۷ روز منقضی می‌شود. در صفحه OAuth consent screen بر روی "Publish App" کلیک کنید تا دسترسی برای اکانت شما دائمی شود.
-
-### 2. Build Binaries / ساخت فایل‌های اجرایی
+#### 2. Build the Application
+Open your terminal in the project directory and run:
 ```bash
 go build -o bin/client ./cmd/client
 go build -o bin/server ./cmd/server
 ```
 
-### 2. Configuration / پیکربندی
+#### 3. Configuration
+You need to create configuration files for both the client and the server. You can use the provided examples as a starting point.
 
-Create your `config.json` based on the provided examples:
-
-**Client Side (`client_config.json`):**
+Create `client_config.json`:
 ```json
 {
   "listen_addr": "127.0.0.1:1080",
-  "storage_type": "google",
-  "google_folder_id": "YOUR_FOLDER_ID",
+  "storage_type": "gcs",
+  "gcs_bucket": "YOUR_BUCKET_NAME",
   "refresh_rate_ms": 100,
-  "flush_rate_ms": 300,
+  "flush_rate_ms": 200,
   "transport": {
     "TargetIP": "216.239.38.120:443",
     "SNI": "google.com",
@@ -79,80 +53,114 @@ Create your `config.json` based on the provided examples:
   }
 }
 ```
----
 
-## Performance & Quotas / عملکرد و سهمیه‌ها
-
-### English
-**Important**: Google Drive has strict API rate limits (quotas). 
-- Using very low values (e.g., `refresh_rate_ms: 100`) will consume your API quota very quickly.
-- To avoid connections being limited or blocked, it is recommended to keep these values above **100ms** at all times.
-- For heavy usage or multiple concurrent users, you should set these to **200ms or higher**.
-
-### فارسی
-**نکته مهم**: گوگل درایو محدودیت‌های سفت‌وسختی برای تعداد درخواست‌های API (Quota) دارد.
-- استفاده از مقادیر بسیار پایین (مثلاً `100ms`) باعث می‌شود سهمیه API شما به سرعت تمام شود.
-- برای جلوگیری از محدود شدن یا قطع شدن اتصال، توصیه می‌شود این مقادیر همیشه بالای **100ms** باشند.
-- برای استفاده‌های سنگین یا زمانی که چندین کاربر به صورت هم‌زمان متصل هستند، بهتر است این مقادیر را روی **200ms یا بالاتر** تنظیم کنید.
-
-**Server Side (`server_config.json`):**
+Create `server_config.json`:
 ```json
 {
-  "storage_type": "google",
-  "google_folder_id": "YOUR_FOLDER_ID",
+  "storage_type": "gcs",
+  "gcs_bucket": "YOUR_BUCKET_NAME",
   "refresh_rate_ms": 100,
-  "flush_rate_ms": 300
+  "flush_rate_ms": 200
 }
 ```
+*Note: Replace `YOUR_BUCKET_NAME` with the exact name of the bucket you created in step 1.*
 
-### 3. Run / اجرا
+#### 4. Run the Application
 
-**Server:**
+**First-time Authentication (Client):**
+Run the client first to authenticate your Google account.
+```bash
+./bin/client -c client_config.json -gc credentials.json
+```
+Follow the URL provided in the terminal, log in to your Google account, and paste the redirected URL back into the terminal. This will generate a `.token` file.
+
+**Deploying the Server:**
+Copy both your `credentials.json` and the newly generated `.token` file to your remote server.
+Run the server:
 ```bash
 ./bin/server -c server_config.json -gc credentials.json
 ```
 
-**Client:**
-```bash
-./bin/client -c client_config.json -gc credentials.json
-```
+### Cost Awareness
+Google Cloud Storage is a paid service. However, for typical FlowDriver usage (small temporary files that are immediately deleted), the costs are minimal (typically under $1 per month for a single user).
 
 ---
 
-## Usage & Authentication / نحوه استفاده و احراز هویت
+## Persian Version
 
-### 1. First-Time Authentication / احراز هویت اولیه
-The project uses OAuth2 "3-legged" flow. You only need to do this once on your local machine:
+**FlowDriverGCS** یک سیستم انتقال پنهان است که برای تونل کردن ترافیک شبکه (SOCKS5) از طریق Google Cloud Storage (GCS) طراحی شده است. این سیستم با استفاده از ترافیک قانونی API، ارتباطی پایدار در محیط‌های شبکه‌ای محدود فراهم می‌کند.
 
-**English:**
-1.  Run the client: `./bin/client -c client_config.json -gc credentials.json`
-2.  A link will appear in your terminal. **Copy and open it** in your web browser.
-3.  Log in to your Google account and grant permissions.
-4.  You will be redirected to an address starting with `http://localhost` (it's okay if the page doesn't load).
-5.  **Copy the entire URL** from your browser's address bar and paste it back into your terminal.
-6.  The program will create a `.token` file next to your `credentials.json`. Authorization is now complete.
+این پروژه فورکی از پروژه اصلی [FlowDriver](https://github.com/NullLatency/FlowDriver) است. در حالی که نسخه اصلی به گوگل درایو متکی است، این فورک از Google Cloud Storage (GCS) استفاده می‌کند تا مشکل محدودیت شدید درخواست‌های API را برطرف کرده و سرعت و پایداری بسیار بالاتری ارائه دهد.
 
-**فارسی:**
-1. کلاینت را اجرا کنید: `./bin/client -c client_config.json -gc credentials.json`
-2. یک لینک در ترمینال ظاهر می‌شود. آن را کپی کرده و در مرورگر خود باز کنید.
-3. وارد اکانت گوگل خود شوید و دسترسی‌های لازم را تایید کنید.
-4. شما به آدرسی که با `http://localhost` شروع می‌شود هدایت می‌شوید (اشکالی ندارد اگر صفحه باز نشود).
-5. **کل آدرس URL** را از نوار آدرس مرورگر کپی کرده و در ترمینال پیست کنید.
-6. برنامه یک فایل با پسوند `.token` در کنار `credentials.json` شما می‌سازد. احراز هویت تمام شد.
+### سلب مسئولیت
+این پروژه صرفاً برای استفاده شخصی و اهداف تحقیقاتی در نظر گرفته شده است. از آن برای مقاصد غیرقانونی یا در محیط‌های عملیاتی استفاده نکنید. نویسندگان هیچ مسئولیتی در قبال سوء استفاده از این ابزار ندارند.
 
-### 2. Deploying to Server / استقرار در سرور
-Once you have the `.token` file, you don't need to log in again.
+### پیش‌نیازها
+- زبان برنامه‌نویسی Go (نسخه 1.25 یا بالاتر)
+- یک حساب Google Cloud فعال
 
-**English:**
-To run the server on a remote upstream machine:
-1.  Copy `credentials.json` **AND** the `.token` file to the server.
-2.  **Crucial**: Make sure your `server_config.json` has the **SAME** `google_folder_id` that the client just created and saved in your local config.
-3.  Run: `./bin/server -c server_config.json -gc credentials.json`
-4.  The server will automatically use the existing token and start immediately.
+### راهنمای گام به گام نصب و راه‌اندازی
 
-**فارسی:**
-پس از دریافت فایل `.token` دیگر نیازی به لاگین مجدد نیست. برای اجرای سرور در یک ماشین دور (Upstream):
-1. فایل `credentials.json` **و** فایل `.token` ساخته شده را به سرور منتقل کنید.
-2. **خیلی مهم**: مطمئن شوید که در فایل `server_config.json` مقدار `google_folder_id` دقیقاً همان مقداری باشد که کلاینت به طور خودکار ساخته و در فایل کانفیگ شما ذخیره کرده است.
-3. اجرا کنید: `./bin/server -c server_config.json -gc credentials.json`
-4. سرور به صورت خودکار از توکن موجود استفاده کرده و بلافاصله شروع به کار می‌کند.
+#### ۱. تنظیمات Google Cloud
+1. به کنسول Google Cloud بروید و یک پروژه جدید ایجاد کنید.
+2. به بخش **Cloud Storage** -> **Buckets** بروید و روی **Create** کلیک کنید.
+3. یک نام یکتا برای باکت خود انتخاب کنید و کلاس ذخیره‌سازی را روی **Standard** قرار دهید.
+4. به بخش **APIs & Services** -> **Credentials** بروید.
+5. روی **Create Credentials** -> **OAuth client ID** کلیک کنید. نوع برنامه را **Desktop App** انتخاب کنید.
+6. فایل JSON تولید شده را دانلود کرده و نام آن را دقیقاً به `credentials.json` تغییر دهید. این فایل را در پوشه پروژه قرار دهید.
+
+#### ۲. ساخت فایل‌های اجرایی
+ترمینال خود را در پوشه پروژه باز کرده و دستورات زیر را اجرا کنید:
+```bash
+go build -o bin/client ./cmd/client
+go build -o bin/server ./cmd/server
+```
+
+#### ۳. پیکربندی
+شما باید فایل‌های پیکربندی را برای کلاینت و سرور ایجاد کنید. می‌توانید از مثال‌های زیر استفاده کنید.
+
+ایجاد فایل `client_config.json`:
+```json
+{
+  "listen_addr": "127.0.0.1:1080",
+  "storage_type": "gcs",
+  "gcs_bucket": "YOUR_BUCKET_NAME",
+  "refresh_rate_ms": 100,
+  "flush_rate_ms": 200,
+  "transport": {
+    "TargetIP": "216.239.38.120:443",
+    "SNI": "google.com",
+    "HostHeader": "www.googleapis.com"
+  }
+}
+```
+
+ایجاد فایل `server_config.json`:
+```json
+{
+  "storage_type": "gcs",
+  "gcs_bucket": "YOUR_BUCKET_NAME",
+  "refresh_rate_ms": 100,
+  "flush_rate_ms": 200
+}
+```
+*توجه: به جای `YOUR_BUCKET_NAME` نام باکتی که در مرحله ۱ ساختید را قرار دهید.*
+
+#### ۴. اجرای برنامه
+
+**احراز هویت برای اولین بار (کلاینت):**
+ابتدا کلاینت را برای احراز هویت حساب گوگل خود اجرا کنید.
+```bash
+./bin/client -c client_config.json -gc credentials.json
+```
+لینکی که در ترمینال نمایش داده می‌شود را دنبال کنید، وارد حساب گوگل خود شوید و URL تغییر مسیر داده شده را کپی کرده و در ترمینال جای‌گذاری کنید. این کار یک فایل `.token` تولید می‌کند.
+
+**راه‌اندازی سرور:**
+فایل `credentials.json` و فایل `.token` که به تازگی تولید شده را در سرور خود کپی کنید.
+سرور را اجرا کنید:
+```bash
+./bin/server -c server_config.json -gc credentials.json
+```
+
+### آگاهی از هزینه‌ها
+سرویس Google Cloud Storage رایگان نیست. با این حال، برای استفاده معمول از FlowDriver (فایل‌های موقت کوچک که فوراً حذف می‌شوند)، هزینه‌ها حداقل است (معمولاً کمتر از ۱ دلار در ماه برای یک کاربر).

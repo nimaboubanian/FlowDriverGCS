@@ -1,8 +1,9 @@
 {
   "listen_addr": "127.0.0.1:1080",
-  "storage_type": "google",
-  "refresh_rate_ms": 200,
-  "flush_rate_ms": 300,
+  "storage_type": "gcs",
+  "gcs_bucket": "YOUR_BUCKET_NAME",
+  "refresh_rate_ms": 100,
+  "flush_rate_ms": 200,
   "transport": {
     "TargetIP": "216.239.38.120:443",
     "SNI": "google.com",

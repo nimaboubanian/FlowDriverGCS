@@ -32,10 +32,14 @@ func main() {
 	}
 
 	var backend storage.Backend
-	if appCfg.StorageType == "google" {
+	switch appCfg.StorageType {
+	case "google":
 		customHttpClient := httpclient.NewCustomClient(appCfg.Transport)
 		backend = storage.NewGoogleBackend(customHttpClient, gcPath, appCfg.GoogleFolderID)
-	} else {
+	case "gcs":
+		customHttpClient := httpclient.NewCustomClient(appCfg.Transport)
+		backend = storage.NewGCSBackend(customHttpClient, gcPath, appCfg.GCSBucket)
+	default:
 		backend, err = storage.NewLocalBackend(appCfg.LocalDir)
 		if err != nil {
 			log.Fatalf("Failed to init local storage: %v", err)
@@ -45,7 +49,7 @@ func main() {
 		log.Fatalf("Backend login failed: %v", err)
 	}
 
-	// AUTOMATION: If folder ID is missing, find or create it
+	// AUTOMATION: If folder ID is missing, find or create it (Google Drive)
 	if appCfg.StorageType == "google" && appCfg.GoogleFolderID == "" {
 		log.Println("Zero-Config: Searching for existing Google Drive folder 'Flow-Data'...")
 		folderID, err := backend.FindFolder(ctx, "Flow-Data")
@@ -69,6 +73,18 @@ func main() {
 		} else {
 			log.Printf("Zero-Config: Config updated with folder ID %s", folderID)
 		}
+	}
+
+	// GCS: Verify bucket exists and is accessible
+	if appCfg.StorageType == "gcs" && appCfg.GCSBucket != "" {
+		bucketID, err := backend.FindFolder(ctx, appCfg.GCSBucket)
+		if err != nil {
+			log.Fatalf("Failed to verify GCS bucket: %v", err)
+		}
+		if bucketID == "" {
+			log.Fatalf("GCS bucket '%s' not found or not accessible. Please create it in the Google Cloud Console.", appCfg.GCSBucket)
+		}
+		log.Printf("GCS: Verified bucket '%s' is accessible", appCfg.GCSBucket)
 	}
 
 	engine := transport.NewEngine(backend, false, "")

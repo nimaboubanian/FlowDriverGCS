@@ -1,5 +1,6 @@
 {
-  "storage_type": "google",
+  "storage_type": "gcs",
+  "gcs_bucket": "YOUR_BUCKET_NAME",
   "refresh_rate_ms": 100,
-  "flush_rate_ms": 300
+  "flush_rate_ms": 200
 }
